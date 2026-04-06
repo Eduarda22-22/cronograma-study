@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cronograma Study</title> 
+
+<link rel="icon" href="favicon.ico">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <div id="topbar">
+    <span class="logo-icon">🎓</span>
+    <h1>Cronograma Study</h1>
+    <div class="streak-badge">🔥 <span id="streak-count">0</span></div>
+    <div class="xp-display">
+      <div class="level-badge">LVL <span id="level-num">1</span></div>
+      <div class="xp-bar-wrap"><div class="xp-bar-fill" id="xp-bar" style="width:0%"></div></div>
+      <span id="xp-label">0 XP</span>
+    </div>
+    <button class="top-btn" id="focus-btn">⏱️ <span data-i18n="focus">Foco</span></button>
+    <button class="top-btn" id="theme-btn">☀️</button>
+    <button class="top-btn" id="lang-btn">🌐 PT</button>
+  </div>
+
+  <div id="mainnav">
+    <button class="nav-btn active" data-section="dashboard">
+      <span class="dot" style="background:var(--accent)"></span>
+      <span data-i18n="dashboard">Dashboard</span>
+    </button>
+    <button class="nav-btn" data-section="schedule">
+      <span class="dot" style="background:var(--green)"></span>
+      <span data-i18n="schedule">Cronograma</span>
+    </button>
+    <button class="nav-btn" data-section="programming">
+      <span class="dot" style="background:var(--cyan)"></span>
+      <span data-i18n="programming">Programação</span>
+    </button>
+    <button class="nav-btn" data-section="games">
+      <span class="dot" style="background:var(--pink)"></span>
+      <span data-i18n="games">Mini-Games</span>
+    </button>
+    <button class="nav-btn" data-section="achievements">
+      <span class="dot" style="background:var(--gold)"></span>
+      <span data-i18n="achievements">Conquistas</span>
+    </button>
+  </div>
+
+  <div id="content">
+
+    <!-- DASHBOARD -->
+    <div class="section active" id="section-dashboard">
+      <div class="section-header">
+        <h2>👋 <span id="dash-greeting"></span></h2>
+        <p data-i18n="dash-sub">Sua central de progresso e missões</p>
+      </div>
+      <div class="dash-grid">
+        <div class="stat-card"><div class="stat-num" style="color:var(--gold)"><span id="stat-xp">0</span></div><div class="stat-label" data-i18n="total-xp">XP Total</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:var(--accent)">LV<span id="stat-lvl">1</span></div><div class="stat-label" data-i18n="level">Nível</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:var(--orange)">🔥<span id="stat-streak">0</span></div><div class="stat-label" data-i18n="streak">Sequência</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:var(--green)"><span id="stat-tasks">0</span></div><div class="stat-label" data-i18n="tasks-done">Missões Completas</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:var(--pink)"><span id="stat-ach">0</span></div><div class="stat-label" data-i18n="achievements-earned">Conquistas</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:var(--cyan)"><span id="stat-games">0</span></div><div class="stat-label" data-i18n="games-played">Jogos Completos</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="card">
+          <div class="card-title"><span class="icon">🔥</span> <span data-i18n="this-week">Esta Semana</span></div>
+          <div class="streak-week" id="streak-week-display"></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="icon">📊</span> <span data-i18n="lang-progress">Progresso por Linguagem</span></div>
+          <div id="lang-progress-bars"></div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:16px;">
+        <div class="card-title"><span class="icon">🏆</span> <span data-i18n="recent-ach">Conquistas Recentes</span></div>
+        <div id="dash-achievements" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
+      </div>
+      <div class="card" style="margin-top:16px;">
+        <div class="card-title"><span class="icon">📅</span> <span data-i18n="today-tasks">Missões de Hoje</span></div>
+        <div id="dash-today-tasks"><p style="color:var(--text3);font-size:0.85rem;" data-i18n="no-tasks-today">Nenhuma missão para hoje. Vá ao Cronograma para adicionar!</p></div>
+      </div>
+    </div>
+
+    <!-- SCHEDULE -->
+    <div class="section" id="section-schedule">
+      <div class="section-header">
+        <h2>📅 <span data-i18n="schedule-title">Cronograma 2026</span></h2>
+        <p data-i18n="schedule-sub">Clique em um dia para ver e gerenciar suas missões</p>
+      </div>
+      <div class="view-tabs">
+        <button class="view-tab active" data-view="month" data-i18n="monthly">Mensal</button>
+        <button class="view-tab" data-view="year" data-i18n="yearly">Anual</button>
+      </div>
+      <div id="view-month">
+        <div class="card">
+          <div class="cal-header">
+            <button class="cal-nav" id="cal-prev">‹</button>
+            <span class="cal-month-label" id="cal-month-label"></span>
+            <button class="cal-nav" id="cal-next">›</button>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+        </div>
+      </div>
+      <div id="view-year" style="display:none;">
+        <div class="year-grid" id="year-grid"></div>
+      </div>
+      <div class="card" id="day-panel">
+        <div class="day-panel-header">
+          <h3 id="day-panel-title" style="font-size:1rem;font-weight:800;"></h3>
+          <button class="close-btn" id="close-day-panel">✕</button>
+        </div>
+        <div id="task-list"></div>
+        <div class="add-task-row">
+          <input class="task-input" id="new-task-input" type="text" placeholder="Nova missão...">
+          <select id="task-xp-sel" style="width:auto;flex-shrink:0;">
+            <option value="10">+10 XP</option>
+            <option value="25">+25 XP</option>
+            <option value="50">+50 XP</option>
+            <option value="100">+100 XP</option>
+          </select>
+          <button class="btn" id="add-task-btn" data-i18n="add">Adicionar</button>
+        </div>
+        <hr class="divider">
+        <div class="card-title"><span class="icon">📝</span> <span data-i18n="notes">Anotações</span></div>
+        <textarea class="notes-input" id="notes-input" rows="3" placeholder="Anotações do dia..."></textarea>
+        <button class="btn btn-sm" id="save-notes-btn" style="margin-top:8px;" data-i18n="save">Salvar</button>
+      </div>
+    </div>
+
+    <!-- PROGRAMMING -->
+    <div class="section" id="section-programming">
+      <div class="section-header">
+        <h2>💻 <span data-i18n="programming-title">Aprendizado de Programação</span></h2>
+        <p data-i18n="programming-sub">Escolha uma linguagem e comece a explorar</p>
+      </div>
+      <div class="lang-tabs">
+        <button class="lang-tab py active" data-lang="py">🐍 Python</button>
+        <button class="lang-tab js" data-lang="js">⚡ JavaScript</button>
+        <button class="lang-tab sol" data-lang="sol">🔷 Solidity</button>
+        <button class="lang-tab ts" data-lang="ts">🔷 TypeScript</button>
+        <button class="lang-tab html" data-lang="html">🌐 HTML & CSS</button>
+      </div>
+
+      <!-- PYTHON -->
+      <div class="lang-content active" id="lang-py">
+        <div class="lang-header" style="background:linear-gradient(135deg,rgba(59,130,246,0.2),rgba(59,130,246,0.05));border:1px solid rgba(59,130,246,0.3);">
+          <span class="lang-icon">🐍</span>
+          <div><h2 style="color:var(--py)">Python</h2><p data-i18n="py-desc">Linguagem versátil, ideal para iniciantes, dados e IA.</p></div>
+        </div>
+        <div class="lesson-grid">
+          <div class="lesson-card" onclick="openLesson('py','variables')">
+            <div class="lesson-badge" style="background:rgba(59,130,246,0.15);color:var(--py);">🟢 <span data-i18n="beginner">Iniciante</span></div>
+            <h4 data-i18n="lesson-variables">Variáveis & Tipos</h4>
+            <p data-i18n="lesson-variables-desc">Aprenda a armazenar e trabalhar com diferentes tipos de dados.</p>
+          </div>
+          <div class="lesson-card" onclick="openLesson('py','loops')">
+            <div class="lesson-badge" style="background:rgba(59,130,246,0.15);color:var(--py);">🟢 <span data-i18n="beginner">Iniciante</span></div>
+            <h4 data-i18n="lesson-loops">Loops & Iteração</h4>
+            <p data-i18n="lesson-loops-desc">Repita ações com loops for e while.</p>
+          </div>
+          <div class="lesson-card" onclick="openLesson('py','functions')">
+            <div class="lesson-badge" style="background:rgba(247,201,72,0.15);color:var(--gold);">🟡 <span data-i18n="intermediate">Intermediário</span></div>
+            <h4 data-i18n="lesson-functions">Funções</h4>
+            <p data-i18n="lesson-functions-desc">Organize o código em blocos reutilizáveis.</p>
+          </div>
+          <div class="lesson-card" onclick="openLesson('py','lists')">
+            <div class="lesson-badge" style="background:rgba(59,130,246,0.15);color:var(--py);">🟢 <span data-i18n="beginner">Iniciante</span></div>
+            <h4 data-i18n="lesson-lists">Listas & Dicionários</h4>
+            <p data-i18n="lesson-lists-desc">Colete e organize dados de forma eficiente.</p>
+          </div>
+          <div class="lesson-card" onclick="openLesson('py','oop')">
+            <div class="lesson-badge" style="background:rgba(248,113,113,0.15);color:var(--red);">🔴 <span data-i18n="advanced">Avançado</span></div>
+            <h4 data-i18n="lesson-oop">Classes & OOP</h4>
+            <p data-i18n="lesson-oop-desc">Programação orientada a objetos em Python.</p>
+          </div>
+          <div class="lesson-card" onclick="openLesson('py','challenge')">
+            <div class="lesson-badge" style="background:rgba(244,114,182,0.15);color:var(--pink);">⚡ <span data-i18n="challenge">Desafio</span></div>
+            <h4 data-i18n="lesson-challenge">Mini Projeto</h4>
+            <p data-i18n="lesson-challenge-desc">Aplique o que aprendeu em um projeto real.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- JAVASCRIPT -->
+      <div class="lang-content" id="lang-js">
+        <div class="lang-header" style="background:linear-gradient(135deg,rgba(234,179,8,0.2),rgba(234,179,8,0.05));border:1px solid rgba(234,179,8,0.3);">
+          <span class="lang-icon">⚡</span>
+          <div><h2 style="color:var(--js)">JavaScript</h2><p data-i18n="js-desc">A linguagem da web — desde interatividade até aplicações full-stack.</p></div>
+        </div>
+        <div class="lesson-grid">
+          <div class="lesson-card" onclick="openLesson('js','dom')">
+            <div class="lesson-badge" style="background:rgba(234,179,8,0.15);color:var(--js);">🟢 <span data-i18n="beginner">Iniciante</span></div>
+            <h4>DOM Manipulation</h4><p data-i18n="js-dom-desc">Interaja e modifique elementos HTML com JavaScript.</p>
+          </div>
+          <div class="lesson-card" onclick="openLesson('js','events')">
+            <div class="lesson-badge" style="background:rgba(234,179,8,0.15);color:var(--js);">🟢 <span data-i18n="beginner">Iniciante</span></div>
+            <h4>Eventos</h4><p data-i18n="js-events-desc">Responda a cliques, teclas e outras interações.</p>
+          </div>
+          <div class="lesson-card" onclick="openLesson('js','async')">
+            <div class="lesson-badge" style="background:rgba(247,201,72,0.15);color:var(--gold);">🟡 <span data-i18n="intermediate">Intermediário</span></div>
+            <h4>Async / Promises</h4><p data-i18n="js-async-desc">Trabalhe com operações assíncronas e a fetch API.</p>
+          </div>
+          <div class="lesson-card" onclick="openLesson('js','es6')">
+            <div class="lesson-badge" style="background:rgba(234,179,8,0.15);color:var(--js);">🟢 <span data-i18n="beginner">Iniciante</span></div>
+            <h4>ES6+ Features</h4><p data-i18n="js-es6-desc">Arrow functions, destructuring, spread e muito mais.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SOLIDITY -->
+      <div class="lang-content" id="lang-sol">
+        <div class="lang-header" style="background:linear-gradient(135deg,rgba(139,92,246,0.2),rgba(139,92,246,0.05));border:1px solid rgba(139,92,246,0.3);">
+          <span class="lang-icon">🔷</span>
+          <div><h2 style="color:var(--sol)">Solidity</h2><p data-i18n="sol-desc">Linguagem para smart contracts na blockchain Ethereum.</p></div>
+        </div>
+        <div class="lesson-grid">
+          <div class="lesson-card" onclick="openLesson('sol','contracts')">
+            <div class="lesson-badge" style="background:rgba(139,92,246,0.15);color:var(--sol);">🟢 <span data-i18n="beginner">Iniciante</span></div>
+            <h4>Smart Contracts</h4><p data-i18n="sol-contracts-desc">O que são e como criar o seu primeiro contrato.</p>
+          </div>
+          <div class="lesson-card" onclick="openLesson('sol','tokens')">
+            <div class="lesson-badge" style="background:rgba(247,201,72,0.15);color:var(--gold);">🟡 <span data-i18n="intermediate">Intermediário</span></div>
+            <h4>ERC-20 Tokens</h4><p data-i18n="sol-tokens-desc">Crie o seu próprio token na blockchain.</p>
+          </div>
+          <div class="lesson-card" onclick="openLesson('sol','nft')">
+            <div class="lesson-badge" style="background:rgba(248,113,113,0.15);color:var(--red);">🔴 <span data-i18n="advanced">Avançado</span></div>
+            <h4>NFTs (ERC-721)</h4><p data-i18n="sol-nft-desc">Crie tokens não fungíveis únicos.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- TYPESCRIPT -->
+      <div class="lang-content" id="lang-ts">
+        <div class="lang-header" style="background:linear-gradient(135deg,rgba(6,182,212,0.2),rgba(6,182,212,0.05));border:1px solid rgba(6,182,212,0.3);">
+          <span class="lang-icon">📘</span>
+          <div><h2 style="color:var(--ts)">TypeScript</h2><p data-i18n="ts-desc">JavaScript com tipos estáticos para código mais robusto.</p></div>
+        </div>
+        <div class="lesson-grid">
+          <div class="lesson-card" onclick="openLesson('ts','types')">
+            <div class="lesson-badge" style="background:rgba(6,182,212,0.15);color:var(--ts);">🟢 <span data-i18n="beginner">Iniciante</span></div>
+            <h4>Types & Interfaces</h4><p data-i18n="ts-types-desc">Defina tipos e interfaces para estruturar dados.</p>
+          </div>
+          <div class="lesson-card" onclick="openLesson('ts','generics')">
+            <div class="lesson-badge" style="background:rgba(247,201,72,0.15);color:var(--gold);">🟡 <span data-i18n="intermediate">Intermediário</span></div>
+            <h4>Generics</h4><p data-i18n="ts-generics-desc">Funções e classes reutilizáveis com tipos dinâmicos.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- HTML & CSS -->
+      <div class="lang-content" id="lang-html">
+        <div class="lang-header" style="background:linear-gradient(135deg,rgba(249,115,22,0.2),rgba(249,115,22,0.05));border:1px solid rgba(249,115,22,0.3);">
+          <span class="lang-icon">🌐</span>
+          <div><h2 style="color:var(--html)">HTML & CSS</h2><p data-i18n="html-desc">A base da web — estrutura e estilo.</p></div>
+        </div>
+        <div class="lesson-grid">
+          <div class="lesson-card" onclick="openLesson('html','basics')">
+            <div class="lesson-badge" style="background:rgba(249,115,22,0.15);color:var(--html);">🟢 <span data-i18n="beginner">Iniciante</span></div>
+            <h4 data-i18n="html-basics">Estrutura HTML</h4><p data-i18n="html-basics-desc">Tags, elementos e a anatomia de uma página web.</p>
+          </div>
+          <div class="lesson-card" onclick="openLesson('html','flexbox')">
+            <div class="lesson-badge" style="background:rgba(247,201,72,0.15);color:var(--gold);">🟡 <span data-i18n="intermediate">Intermediário</span></div>
+            <h4>Flexbox & Grid</h4><p data-i18n="html-flex-desc">Layouts modernos e responsivos com CSS.</p>
+          </div>
+          <div class="lesson-card" onclick="openLesson('html','animation')">
+            <div class="lesson-badge" style="background:rgba(247,201,72,0.15);color:var(--gold);">🟡 <span data-i18n="intermediate">Intermediário</span></div>
+            <h4>CSS Animations</h4><p data-i18n="html-anim-desc">Dê vida às páginas com transições e animações.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MINI-GAMES -->
+    <div class="section" id="section-games">
+      <div class="section-header">
+        <h2>🎮 <span data-i18n="games-title">Mini-Games de Programação</span></h2>
+        <p data-i18n="games-sub">Aprenda jogando — ganhe XP e conquistas!</p>
+      </div>
+      <div class="games-grid" id="games-grid-select">
+        <div class="game-card" onclick="startGame('quiz')">
+          <div class="game-icon">🧠</div>
+          <h3 data-i18n="game-quiz">Quiz</h3>
+          <p data-i18n="game-quiz-desc">Responda perguntas de múltipla escolha sobre programação.</p>
+          <div style="margin-top:12px;"><span class="chip">+25 XP</span></div>
+        </div>
+        <div class="game-card" onclick="startGame('code')">
+          <div class="game-icon">⌨️</div>
+          <h3 data-i18n="game-code">Complete o Código</h3>
+          <p data-i18n="game-code-desc">Preencha os espaços em branco no código correto.</p>
+          <div style="margin-top:12px;"><span class="chip">+50 XP</span></div>
+        </div>
+        <div class="game-card" onclick="startGame('debug')">
+          <div class="game-icon">🐛</div>
+          <h3 data-i18n="game-debug">Encontre o Bug</h3>
+          <p data-i18n="game-debug-desc">Identifique o erro no código — você consegue?</p>
+          <div style="margin-top:12px;"><span class="chip">+75 XP</span></div>
+        </div>
+        <div class="game-card" onclick="startGame('logic')">
+          <div class="game-icon">🧩</div>
+          <h3 data-i18n="game-logic">Lógica</h3>
+          <p data-i18n="game-logic-desc">Desafios de lógica e raciocínio computacional.</p>
+          <div style="margin-top:12px;"><span class="chip">+40 XP</span></div>
+        </div>
+      </div>
+      <div class="card" id="quiz-area">
+        <div class="day-panel-header">
+          <div class="card-title">🧠 <span data-i18n="game-quiz">Quiz</span></div>
+          <button class="close-btn" onclick="closeGame('quiz')">✕</button>
+        </div>
+        <div style="margin-bottom:12px;display:flex;align-items:center;gap:10px;">
+          <span data-i18n="question">Pergunta</span> <strong id="q-num">1</strong>/10
+          <div style="flex:1;"><div class="progress-bar"><div class="progress-fill" id="quiz-progress" style="width:10%;background:var(--accent)"></div></div></div>
+          <span class="chip">Score: <strong id="quiz-score">0</strong></span>
+        </div>
+        <div class="quiz-q" id="quiz-question"></div>
+        <div class="quiz-options" id="quiz-options"></div>
+        <div id="quiz-feedback" class="quiz-feedback" style="display:none;"></div>
+        <div style="margin-top:16px;display:flex;gap:10px;">
+          <button class="btn" id="quiz-next-btn" style="display:none;" data-i18n="next">Próxima →</button>
+          <button class="btn btn-gold" id="quiz-finish-btn" style="display:none;" data-i18n="finish">Finalizar 🎉</button>
+        </div>
+      </div>
+      <div class="card" id="code-area">
+        <div class="day-panel-header">
+          <div class="card-title">⌨️ <span data-i18n="game-code">Complete o Código</span></div>
+          <button class="close-btn" onclick="closeGame('code')">✕</button>
+        </div>
+        <div id="code-challenge-content"></div>
+        <div style="margin-top:14px;display:flex;gap:10px;">
+          <button class="btn" id="code-check-btn" data-i18n="check">Verificar ✓</button>
+          <button class="btn btn-sm" id="code-next-ch-btn" style="display:none;background:var(--green);color:#fff;" data-i18n="next">Próximo →</button>
+        </div>
+        <div id="code-feedback" style="margin-top:10px;"></div>
+      </div>
+      <div class="card" id="debug-area">
+        <div class="day-panel-header">
+          <div class="card-title">🐛 <span data-i18n="game-debug">Encontre o Bug</span></div>
+          <button class="close-btn" onclick="closeGame('debug')">✕</button>
+        </div>
+        <p style="color:var(--text2);font-size:0.82rem;margin-bottom:12px;" data-i18n="debug-inst">Clique na linha que contém o erro.</p>
+        <div id="debug-lines"></div>
+        <div id="debug-feedback" style="margin-top:12px;"></div>
+        <button class="btn" id="debug-next-btn" style="display:none;margin-top:10px;" data-i18n="next">Próximo →</button>
+      </div>
+      <div class="card" id="logic-area" style="display:none;">
+        <div class="day-panel-header">
+          <div class="card-title">🧩 <span data-i18n="game-logic">Desafio Lógico</span></div>
+          <button class="close-btn" onclick="closeGame('logic')">✕</button>
+        </div>
+        <div id="logic-content"></div>
+        <div style="margin-top:14px;display:flex;gap:10px;">
+          <button class="btn" id="logic-check-btn" data-i18n="check">Verificar ✓</button>
+          <button class="btn btn-sm" id="logic-next-btn" style="display:none;background:var(--green);color:#fff;" data-i18n="next">Próximo →</button>
+        </div>
+        <div id="logic-feedback" style="margin-top:10px;"></div>
+      </div>
+    </div>
+
+    <!-- ACHIEVEMENTS -->
+    <div class="section" id="section-achievements">
+      <div class="section-header">
+        <h2>🏆 <span data-i18n="achievements-title">Conquistas & Recompensas</span></h2>
+        <p data-i18n="achievements-sub">Complete missões para desbloquear conquistas épicas!</p>
+      </div>
+      <div class="achievements-grid" id="achievements-grid"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- LESSON MODAL -->
+<div class="modal-overlay" id="lesson-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeLessonModal()">✕</button>
+    <div id="lesson-modal-content"></div>
+    <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn btn-green" onclick="markLessonDone()" data-i18n="lesson-done">Lição Concluída! +30 XP</button>
+      <button class="btn btn-sm" style="background:var(--card2);" onclick="closeLessonModal()" data-i18n="close">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOCUS OVERLAY -->
+<div id="focus-overlay">
+  <div class="focus-circle">
+    <svg viewBox="0 0 260 260">
+      <circle class="focus-ring-bg" cx="130" cy="130" r="124"/>
+      <circle class="focus-ring" cx="130" cy="130" r="124" id="focus-ring" stroke-dasharray="779" stroke-dashoffset="0"/>
+    </svg>
+    <div class="focus-timer" id="focus-timer">25:00</div>
+    <div class="focus-label" id="focus-label" data-i18n="focus-ready">Pronto para focar?</div>
+  </div>
+  <div style="display:flex;gap:12px;">
+    <button class="btn" id="focus-start-btn" data-i18n="start">Iniciar</button>
+    <button class="btn" id="focus-pause-btn" style="display:none;background:var(--gold);color:#000;" data-i18n="pause">Pausar</button>
+    <button class="btn btn-sm" style="background:var(--card2);" onclick="closeFocus()" data-i18n="close">Fechar</button>
+  </div>
+  <div style="margin-top:20px;display:flex;gap:8px;">
+    <button class="top-btn" onclick="setFocusDuration(25)">25 min</button>
+    <button class="top-btn" onclick="setFocusDuration(45)">45 min</button>
+    <button class="top-btn" onclick="setFocusDuration(60)">60 min</button>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
